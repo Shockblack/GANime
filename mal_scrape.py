@@ -28,6 +28,7 @@ from bs4 import *
 from PIL import Image
 from io import BytesIO
 import os
+from tqdm import tqdm
 
 def download_images_from_url(url, directory, convert_to_jpg=True):
     """Downloads images from the given url and saves them to the specified directory.
@@ -71,30 +72,35 @@ def download_images_from_url(url, directory, convert_to_jpg=True):
         # Update image name to be clean
         image_name = image_name.split('?')[0]
 
+        # If the image is already downloaded, skip it
+        # This should prevent the program from downloading the same image twice
+        if os.path.exists(directory + image_name):
+            continue
+
         # Images that are not part of the character list are not downloaded
-        rejected_imgs = ["mini_banner", "badge", "challenge", "icon", "question"]
+        rejected_imgs = ["mini_banner", "badge", "challenge", "icon", "question", "2018.jpg"]
 
         # Skips the image if it is not a face image (question mark)
         if any(substring in image_name for substring in rejected_imgs):
-            print(f"Image not available for {image_name}")
             continue
 
         # Downloading the image
         image_data = requests.get(image_url)
 
-        if convert_to_jpg:
-            # Converting the image to jpg
-            image_data = Image.open(BytesIO(image_data.content))
-            image_data = image_data.convert('RGB')
-            image_data = image_data.save(directory + '/' + image_name, 'JPEG')
+        if convert_to_jpg and image_name.split('.')[-1] != 'jpg':
+            try:
+                # Converting the image to jpg
+                image_data = Image.open(BytesIO(image_data.content))
+                image_data = image_data.convert('RGB')
+                image_data = image_data.save(directory + '/' + image_name, 'JPEG')
+            except:
+                print(f"Error: Could not convert image {image_name} to jpg.")
+                continue
         else:
             # Saving the image
             image_data = image_data.content
             with open(directory + '/' + image_name, 'wb') as f:
                 f.write(image_data)
-
-        # Printing the image name
-        print(image_name)
 
 def parse_mal_characters(num_images, directory=None):
     """Parses the MyAnimeList characters page and downloads the images using
@@ -123,11 +129,11 @@ def parse_mal_characters(num_images, directory=None):
             os.mkdir(directory)
 
     # Looping through the pages
-    for page in range(0, num_images, 50):
+    for page in tqdm(range(0, num_images, 50), desc="Parsing MAL pages..."):
         # Creating the url
         url = 'https://myanimelist.net/character.php?limit=' + str(page)
         # Downloading the images from the url
         download_images_from_url(url, directory=directory)
 
 if __name__ == "__main__":
-    parse_mal_characters(num_images=100)
+    parse_mal_characters(num_images=30000)
