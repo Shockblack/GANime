@@ -3,7 +3,7 @@
 #
 # Programmer: Aiden Zelakiewicz (https://github.com/Shockblack)
 #
-# Dependencies: requests, BeautifulSoup, PIL, os, io
+# Dependencies: requests, BeautifulSoup, PIL, os, io, numpy, tqdm
 # 
 # Description:
 #   Scrapes the MyAnimeList website for anime face images and information. Goes
@@ -19,6 +19,7 @@
 #
 # Revision History:
 #   27-Jul-2022:  File Created
+#   28-Jul-2022:  Added rejected images file import
 # 
 #------------------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ from PIL import Image
 from io import BytesIO
 import os
 from tqdm import tqdm
+import numpy as np
 
 def download_images_from_url(url, directory, convert_to_jpg=True):
     """Downloads images from the given url and saves them to the specified directory.
@@ -77,8 +79,8 @@ def download_images_from_url(url, directory, convert_to_jpg=True):
         if os.path.exists(directory + image_name):
             continue
 
-        # Images that are not part of the character list are not downloaded
-        rejected_imgs = ["mini_banner", "badge", "challenge", "icon", "question", "2018.jpg"]
+        # Images that are not part of the character list are not downloaded (or bad images)
+        rejected_imgs = np.loadtxt('bad_file_id.txt', dtype=str, comments='#').tolist()
 
         # Skips the image if it is not a face image (question mark)
         if any(substring in image_name for substring in rejected_imgs):
