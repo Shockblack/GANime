@@ -32,8 +32,9 @@ import os
 from tqdm import tqdm
 import numpy as np
 
-def download_images_from_url(url, directory, convert_to_jpg=True):
+def download_images_from_url(url, directory, convert_to_jpg=True, large_img=True):
     """Downloads images from the given url and saves them to the specified directory.
+    This function is primarily curated for the website MyAnimeList.net.
 
     Parameters
     ----------
@@ -43,6 +44,8 @@ def download_images_from_url(url, directory, convert_to_jpg=True):
         The directory to save the images to.
     convert_to_jpg : bool, optional
         Whether or not to convert the images to jpg. The default is True.
+    large_img : bool, optional
+        Whether or not to download images at 2x resolution, 100x156. The default is True.
     """
 
     # Downloading the page
@@ -61,7 +64,11 @@ def download_images_from_url(url, directory, convert_to_jpg=True):
         try:
             image_url = image['src']
         except KeyError:
-            image_url = image['data-src']
+            if large_img:
+                image_url = image['data-srcset']
+                image_url = image_url.split(' ')[-2]
+            else:
+                image_url = image['data-src']
         except:
             print("Error: Could not find image source.")
 
