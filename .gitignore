@@ -2,6 +2,7 @@
 data/
 bad_images/
 .DS_Store
+figs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
