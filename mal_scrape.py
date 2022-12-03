@@ -138,11 +138,11 @@ def parse_mal_characters(num_images, directory=None):
             os.mkdir(directory)
 
     # Looping through the pages
-    for page in tqdm(range(0, num_images, 50), desc="Parsing MAL pages..."):
+    for page in tqdm(range(35000, num_images, 50), desc="Parsing MAL pages..."):
         # Creating the url
         url = 'https://myanimelist.net/character.php?limit=' + str(page)
         # Downloading the images from the url
         download_images_from_url(url, directory=directory)
 
 if __name__ == "__main__":
-    parse_mal_characters(num_images=30000)
+    parse_mal_characters(num_images=100000)
