@@ -51,8 +51,8 @@ print("Using device: ", device)
 train_loader = get_dataloader(batch_size, 'data/', num_workers=0)
 
 # Loading the models
-generator = Generator_tut(nz, ngf, nc).to(device)
-discriminator = Discriminator_tut(nc, ndf).to(device)
+generator = Generator(nz, ngf, nc).to(device)
+discriminator = Discriminator(nc, ndf).to(device)
 
 # Initializing weights
 generator.apply(weights_init_tut)
