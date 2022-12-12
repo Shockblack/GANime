@@ -12,6 +12,7 @@
 # Revision History:
 #   01-Nov-2022:  File Created
 #   25-Nov-2022:  Updated GenBlock to use upsample
+#   06-Dec-2022:  Replaced generator with convTranspose2d again...
 #--------------------------------------------------------------
 
 import torch
@@ -44,7 +45,7 @@ def GenBlock(in_channels, out_channels, kernel_size, stride, padding, bn=True):
 def DiscBlock(in_channels, out_channels, kernel_size, stride, padding, bn=True):
 
     block= nn.Sequential()
-    
+
     block.add_module('conv', conv2d(in_channels, out_channels, kernel_size, stride, padding, bias=False))
 
     if bn:
